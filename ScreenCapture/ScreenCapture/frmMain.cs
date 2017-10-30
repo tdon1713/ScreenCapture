@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -19,28 +20,7 @@ namespace ScreenCapture
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            fswCaptures.Path = Constants.FileSaveLocation;
-
-            List<string> _currentFiles = new List<string>();
-
-            Task.Run(() =>
-            {
-                _currentFiles.AddRange(Directory.EnumerateFiles(Constants.FileSaveLocation).Select(x => x));
-
-            }).ContinueWith((continueWith) =>
-            {
-                if (continueWith.Status != TaskStatus.RanToCompletion)
-                {
-                    return;
-                }
-
-                IEnumerable<ListViewItem> items = _currentFiles.Select(x => genNewListItem(x));
-
-                this.Invoke((MethodInvoker)delegate
-                {
-                    lstFiles.Items.AddRange(items.Where(x => (x as ListViewItem).SubItems[0].Text.ToLower() != AppDomain.CurrentDomain.FriendlyName.ToLower()).ToArray());
-                });
-            });
+            LoadImagesFromPath();
         }
 
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e)
@@ -60,12 +40,38 @@ namespace ScreenCapture
             OpenSelectedInPaint();
         }
 
+        private void lstFiles_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                DeleteSelectedImage();
+            }
+        }
+
         #region Menu Events
 
-        private void openPrimaryCaptureToolStripMenuItem_Click(object sender, EventArgs e)
+        private void caputreToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmCapture capture = new frmCapture();
-            capture.Show();
+            OpenCustomDialog<frmCapture>();
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenCustomDialog<frmSettings>(LoadImagesFromPath);
+        }
+
+        #endregion
+
+        #region Selected Image Events
+
+        private void btnDeleteImage_Click(object sender, EventArgs e)
+        {
+            DeleteSelectedImage();
+        }
+
+        private void btnOpenImage_Click(object sender, EventArgs e)
+        {
+            OpenSelectedInPaint();
         }
 
         #endregion
@@ -102,6 +108,55 @@ namespace ScreenCapture
 
         #region Private Methods
 
+        public void LoadImagesFromPath()
+        {
+            if (!Directory.Exists(ConfigurationManager.AppSettings[Constants.SettingsKey.SaveLocation]))
+            {
+                return; 
+            }
+
+            fswCaptures.Path = ConfigurationManager.AppSettings[Constants.SettingsKey.SaveLocation];
+
+            List<string> _currentFiles = new List<string>();
+
+            Task.Run(() =>
+            {
+                _currentFiles.AddRange(Directory.EnumerateFiles(ConfigurationManager.AppSettings[Constants.SettingsKey.SaveLocation]).Select(x => x));
+
+            }).ContinueWith((continueWith) =>
+            {
+                if (continueWith.Status != TaskStatus.RanToCompletion)
+                {
+                    return;
+                }
+
+                IEnumerable<ListViewItem> items = _currentFiles.Select(x => genNewListItem(x));
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    lstFiles.Items.Clear();
+                    picPreview.Image = null;
+                    lstFiles.Items.AddRange(items.Where(x => (x as ListViewItem).SubItems[0].Text.ToLower() != AppDomain.CurrentDomain.FriendlyName.ToLower()).ToArray());
+                });
+            });
+        }
+
+        private void DeleteSelectedImage()
+        {
+            if (lstFiles.SelectedIndices.Count == 0)
+            {
+                return;
+            }
+
+            DialogResult result = MessageBox.Show($"Are you sure you want to delete {lstFiles.SelectedItems[0].SubItems[0].Text}?", "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+
+            File.Delete(lstFiles.SelectedItems[0].Tag.ToString());
+        }
+
         private ListViewItem genNewListItem(string filePath)
         {
             FileInfo info = new FileInfo(filePath);
@@ -110,7 +165,7 @@ namespace ScreenCapture
                 info.Name,
                 info.FullName
             });
-            
+
             item.Tag = info.FullName;
             item.Name = info.Name;
 
@@ -129,6 +184,21 @@ namespace ScreenCapture
             startInfo.Verb = "edit";
 
             Process.Start(startInfo);
+        }
+
+        private void OpenCustomDialog<T>(Action completionMethod = null) where T : Form, new()
+        {
+            T frmToShow = new T();
+            if (frmToShow is frmSettings)
+            {
+                (frmToShow as frmSettings).CompletionMethod = completionMethod;
+            }
+
+            frmToShow.StartPosition = FormStartPosition.Manual;
+            frmToShow.Location = new Point(Location.X + 15, Location.Y + 15);
+            frmToShow.Width = Width - 30;
+            frmToShow.Height = Height - 30;
+            frmToShow.ShowDialog(this);
         }
 
         #endregion

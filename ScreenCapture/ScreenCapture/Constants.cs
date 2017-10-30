@@ -2,6 +2,9 @@
 {
     public static class Constants
     {
-        public const string FileSaveLocation = @"D:\Drive\Screencaps\";
+        public static class SettingsKey
+        {
+            public const string SaveLocation = "SaveLocation";
+        }
     }
 }
