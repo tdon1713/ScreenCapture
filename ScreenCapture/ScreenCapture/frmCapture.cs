@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace ScreenCapture
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnCapture_Click(object sender, EventArgs e)
         {
             Task.Run(() =>
             {
@@ -27,10 +28,23 @@ namespace ScreenCapture
                             screenCap.Size,
                             CopyPixelOperation.SourceCopy);
 
-                        screenCap.Save($"{Constants.FileSaveLocation}{DateTime.Now.Ticks}.png", ImageFormat.Png);
+                        screenCap.Save($"{ConfigurationManager.AppSettings[Constants.SettingsKey.SaveLocation]}{DateTime.Now.Ticks}.png", ImageFormat.Png);
                     }
                 }
             });
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void btnCapture_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                Close();
+            }
         }
     }
 }
