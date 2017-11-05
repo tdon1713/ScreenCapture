@@ -82,17 +82,30 @@ namespace ScreenCapture
                 return;
             }
 
-            try
+            await Task.Run(async () =>
             {
-                GyazoApiManager api = new GyazoApiManager("784b0ae61c12329c359f43daf40d8a10d8520247731d6ec1cc415fcac116d61c");
-                var response = await api.UploadImage(File.ReadAllBytes(lstFiles.SelectedItems[0].Tag.ToString()), lstFiles.SelectedItems[0].SubItems[0].Text);
+                try
+                {
+                    ListViewItem item = null;
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        item = lstFiles.SelectedItems[0];
+                    });
 
-                DeleteSelectedImage(promptDelete: false);
-            }
-            catch
-            {
-                MessageBox.Show("Failed uploading image");
-            }
+
+                    string fileLocation = item.Tag.ToString();
+                    string fileName = item.SubItems[0].Text;
+
+                    GyazoApiManager api = new GyazoApiManager(Constants.GyazoApiAccessToken);
+                    var response = await api.UploadImage(File.ReadAllBytes(fileLocation), fileName);
+
+                    DeleteSelectedImage(promptDelete: false, listItem: item);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed uploading image");
+                }
+            });
         }
 
         #endregion
@@ -162,13 +175,22 @@ namespace ScreenCapture
             });
         }
 
-        private void DeleteSelectedImage(bool promptDelete = true)
+        /// <summary>
+        /// Deletes a specific image.
+        /// </summary>
+        /// <param name="promptDelete">Whether the user should be prompted for delete.</param>
+        /// <param name="listItem">This location of the listItem will only be used if <paramref name="promptDelete"/> is passed as True</param>
+        private void DeleteSelectedImage(bool promptDelete = true, ListViewItem listItem = null)
         {
-            if (lstFiles.SelectedIndices.Count == 0)
+            if (listItem == null)
             {
-                return;
+                if (lstFiles.SelectedIndices.Count == 0)
+                {
+                    return;
+                }
             }
 
+            string location = string.Empty;
             if (promptDelete)
             {
                 DialogResult result = MessageBox.Show($"Are you sure you want to delete {lstFiles.SelectedItems[0].SubItems[0].Text}?", "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
@@ -176,9 +198,21 @@ namespace ScreenCapture
                 {
                     return;
                 }
+
+                location = lstFiles.SelectedItems[0].Tag.ToString();
+            }
+            else if (listItem != null)
+            {
+                location = listItem.Tag.ToString();
             }
 
-            File.Delete(lstFiles.SelectedItems[0].Tag.ToString());
+            if (String.IsNullOrWhiteSpace(location))
+            {
+                MessageBox.Show("Failed to delete image. File location is unknown");
+                return;
+            }
+
+            File.Delete(location);
         }
 
         private ListViewItem genNewListItem(string filePath)
