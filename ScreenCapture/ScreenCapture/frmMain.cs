@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Onyxon.GyazoAPI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
@@ -74,6 +75,26 @@ namespace ScreenCapture
             OpenSelectedInPaint();
         }
 
+        private async void btnUpload_Click(object sender, EventArgs e)
+        {
+            if (lstFiles.SelectedIndices.Count == 0)
+            {
+                return;
+            }
+
+            try
+            {
+                GyazoApiManager api = new GyazoApiManager("784b0ae61c12329c359f43daf40d8a10d8520247731d6ec1cc415fcac116d61c");
+                var response = await api.UploadImage(File.ReadAllBytes(lstFiles.SelectedItems[0].Tag.ToString()), lstFiles.SelectedItems[0].SubItems[0].Text);
+
+                DeleteSelectedImage(promptDelete: false);
+            }
+            catch
+            {
+                MessageBox.Show("Failed uploading image");
+            }
+        }
+
         #endregion
 
         #region File Watcher Events
@@ -112,7 +133,7 @@ namespace ScreenCapture
         {
             if (!Directory.Exists(ConfigurationManager.AppSettings[Constants.SettingsKey.SaveLocation]))
             {
-                return; 
+                return;
             }
 
             fswCaptures.Path = ConfigurationManager.AppSettings[Constants.SettingsKey.SaveLocation];
@@ -141,17 +162,20 @@ namespace ScreenCapture
             });
         }
 
-        private void DeleteSelectedImage()
+        private void DeleteSelectedImage(bool promptDelete = true)
         {
             if (lstFiles.SelectedIndices.Count == 0)
             {
                 return;
             }
 
-            DialogResult result = MessageBox.Show($"Are you sure you want to delete {lstFiles.SelectedItems[0].SubItems[0].Text}?", "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-            if (result == DialogResult.No)
+            if (promptDelete)
             {
-                return;
+                DialogResult result = MessageBox.Show($"Are you sure you want to delete {lstFiles.SelectedItems[0].SubItems[0].Text}?", "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                if (result == DialogResult.No)
+                {
+                    return;
+                }
             }
 
             File.Delete(lstFiles.SelectedItems[0].Tag.ToString());
