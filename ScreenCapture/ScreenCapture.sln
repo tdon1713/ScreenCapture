@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenCapture", "ScreenCapture\ScreenCapture.csproj", "{EBDC3D14-D0DA-4BAF-9259-4CF09E38A1DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GyazoAPI", "..\..\GyazoAPI\GyazoAPI\GyazoAPI.csproj", "{A6EBF5DF-D4FA-4414-8200-4B1145886C71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EBDC3D14-D0DA-4BAF-9259-4CF09E38A1DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBDC3D14-D0DA-4BAF-9259-4CF09E38A1DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBDC3D14-D0DA-4BAF-9259-4CF09E38A1DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6EBF5DF-D4FA-4414-8200-4B1145886C71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6EBF5DF-D4FA-4414-8200-4B1145886C71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6EBF5DF-D4FA-4414-8200-4B1145886C71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6EBF5DF-D4FA-4414-8200-4B1145886C71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
