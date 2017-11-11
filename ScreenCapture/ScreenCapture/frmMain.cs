@@ -92,16 +92,21 @@ namespace ScreenCapture
                         item = lstFiles.SelectedItems[0];
                     });
 
-
                     string fileLocation = item.Tag.ToString();
                     string fileName = item.SubItems[0].Text;
 
                     GyazoApiManager api = new GyazoApiManager(Constants.GyazoApiAccessToken);
-                    var response = await api.UploadImage(File.ReadAllBytes(fileLocation), fileName);
+                    await api.UploadImage(File.ReadAllBytes(fileLocation), fileName);
 
-                    DeleteSelectedImage(promptDelete: false, listItem: item);
+                    string archiveLocation = ConfigurationManager.AppSettings[Constants.SettingsKey.ArchiveLocation];
+                    if (!Directory.Exists(archiveLocation))
+                    {
+                        Directory.CreateDirectory(archiveLocation);
+                    }
+
+                    File.Move(fileLocation, archiveLocation + fileName);
                 }
-                catch (Exception ex)
+                catch
                 {
                     MessageBox.Show("Failed uploading image");
                 }
