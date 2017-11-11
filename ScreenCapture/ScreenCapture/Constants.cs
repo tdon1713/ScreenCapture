@@ -6,6 +6,7 @@
 
         public static class SettingsKey
         {
+            public const string ArchiveLocation = "ArchiveLocation";
             public const string SaveLocation = "SaveLocation";
         }
     }

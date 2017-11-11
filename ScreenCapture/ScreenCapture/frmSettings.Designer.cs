@@ -33,6 +33,8 @@
             this.txtSaveLocation = new System.Windows.Forms.TextBox();
             this.btnExit = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
+            this.txtArchiveLocation = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -100,12 +102,35 @@
             this.btnSave.UseVisualStyleBackColor = false;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // txtArchiveLocation
+            // 
+            this.txtArchiveLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtArchiveLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.txtArchiveLocation.Location = new System.Drawing.Point(15, 154);
+            this.txtArchiveLocation.Name = "txtArchiveLocation";
+            this.txtArchiveLocation.Size = new System.Drawing.Size(279, 26);
+            this.txtArchiveLocation.TabIndex = 6;
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(15, 129);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(279, 22);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Archive Location";
+            // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(55)))), ((int)(((byte)(75)))));
             this.ClientSize = new System.Drawing.Size(680, 360);
+            this.Controls.Add(this.txtArchiveLocation);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.txtSaveLocation);
@@ -132,6 +157,8 @@
         private System.Windows.Forms.TextBox txtSaveLocation;
         private System.Windows.Forms.Button btnExit;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.TextBox txtArchiveLocation;
+        private System.Windows.Forms.Label label3;
     }
 }
 
