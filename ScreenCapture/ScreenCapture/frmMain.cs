@@ -244,8 +244,6 @@ namespace ScreenCapture
 
             Clipboard.SetText(lstFiles.SelectedItems[0].Tag.ToString());
             ProcessStartInfo startInfo = new ProcessStartInfo(lstFiles.SelectedItems[0].Tag.ToString());
-            startInfo.Verb = "edit";
-
             Process.Start(startInfo);
         }
 
